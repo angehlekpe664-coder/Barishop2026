@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Barishop propose des parfums d'exception, des conseils parfumés et des nouveautés inspirantes. Découvrez votre nouvelle fragrance préférée avec une livraison soignée.">
+    <meta name="keywords" content="parfum, fragrances, parfum français, conseils parfum, blog parfum, livraison parfum">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://barishop.example/">
+
+    <meta property="og:title" content="Barishop - Parfums d'exception">
+    <meta property="og:description" content="Parfums artisanaux, conseils et tendances. Explorez nos sélections parfumées et trouvez votre signature olfactive.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://barishop.example/">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1552281298-bf8b0008ab53?auto=format&fit=crop&w=1600&q=80">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Barishop - Parfums d'exception">
+    <meta name="twitter:description" content="Parfums artisanaux, conseils et tendances. Explorez nos sélections parfumées et trouvez votre signature olfactive.">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Barishop",
+      "url": "https://barishop.example/",
+      "logo": "https://images.unsplash.com/photo-1552281298-bf8b0008ab53?auto=format&fit=crop&w=1600&q=80",
+      "sameAs": [
+        "https://www.facebook.com/bari.wni",    
+        "https://www.instagram.com/",
+        "https://wa.me/22941998049"
+      ],
+      "description": "Barishop propose des parfums artisanaux, des conseils parfumés et des nouveautés inspirantes.",
+      "contactPoint": [{
+        "@type": "ContactPoint",
+        "telephone": "+33 1 23 45 67 89",
+        "contactType": "customer support",
+        "availableLanguage": ["fr", "en"]
+      }]
+    }
+    </script>
+
+    <title>Barishop - Parfums d'exception</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile-menu.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <!-- Background decorative gradients -->
+    <div class="background-parfums"></div>
+
+    <!-- Decorative orbs -->
+    <div class="decoration-orbe orbe-1"></div>
+    <div class="decoration-orbe orbe-2"></div>
+    <div class="decoration-orbe orbe-3"></div>
+    <div class="decoration-orbe orbe-4"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#accueil" class="logo">
+                <span class="logo-text">Barishop</span>
+            </a>
+
+            <button id="menuToggle" class="menu-toggle" aria-label="Basculer le menu">
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+            </button>
+
+            <div class="nav-menu-container">
+                <ul class="nav-menu">
+                    <li><a href="#accueil" class="nav-link active">Accueil</a></li>
+                    <li><a href="#produits" class="nav-link">Parfums</a></li>
+                    <li><a href="#blog" class="nav-link">Blog</a></li>
+                    <li><a href="#livraison" class="nav-link">Livraison</a></li>
+                    <li><a href="#contact" class="nav-link">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="wishlistBtn" class="nav-action-btn" aria-label="Voir mes favoris">
+                        <i class="fas fa-heart"></i>
+                        <span id="wishlistCount" class="cart-count">0</span>
+                    </button>
+                    <button id="cartBtn" class="nav-action-btn" aria-label="Ouvrir le panier">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cartCount" class="cart-count">0</span>
+                    </button>
+                    <button id="userBtn" class="nav-action-btn" aria-label="Se connecter">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="accueil">
+        <div class="hero-slideshow">
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
+            <div class="slide"></div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Barishop</h1>
+                <p class="hero-subtitle">Des parfums chaleureux, fáciles à porter, livrés chez vous.</p>
+                <div class="typing-container">
+                    <span class="typing-text"></span>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#produits" class="btn btn-primary">Voir les parfums</a>
+                    <a href="#contact" class="btn btn-secondary">Écrire à Barishop</a>
+                </div>
+            </div>
+
+            <div class="perfume-display">
+                <img class="parfum-float" src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=400&q=80" alt="Flacon de parfum">
+                <img class="parfum-float" src="https://images.unsplash.com/photo-1590736969955-0126f7e1e88d?auto=format&fit=crop&w=400&q=80" alt="Flacon de parfum">
+                <img class="parfum-float" src="https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=400&q=80" alt="Flacon de parfum">
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust Badges -->
+    <section class="trust-badges">
+        <div class="trust-badges-grid">
+            <div class="trust-badge" data-aos="fade-up">
+                <i class="fas fa-shipping-fast"></i>
+                <div>
+                    <h4>Livraison Offerte</h4>
+                    <p> dès 100€ d'achat</p>
+                </div>
+            </div>
+            <div class="trust-badge" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-award"></i>
+                <div>
+                    <h4>Qualité Premium</h4>
+                    <p>Ingrédients rares</p>
+                </div>
+            </div>
+            <div class="trust-badge" data-aos="fade-up" data-aos-delay="200">
+                <i class="fas fa-headset"></i>
+                <div>
+                    <h4>Support 24/7</h4>
+                    <p>À votre écoute</p>
+                </div>
+            </div>
+            <div class="trust-badge" data-aos="fade-up" data-aos-delay="300">
+                <i class="fas fa-undo"></i>
+                <div>
+                    <h4>Retours Gratuits</h4>
+                    <p>30 jours pour décider</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY CHOOSE US -->
+    <section class="section why-choose" id="features">
+        <div class="section-header">
+            <h2>Pourquoi Barishop ?</h2>
+            <p class="section-subtitle">Une expérience parfumée unique, pensée pour les amateurs de raffinement.</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up">
+                <div class="feature-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Ingrédients rares</h3>
+                <p>Nous sélectionnons des notes nobles et des matières premières d'exception pour des fragrances uniques.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon">
+                    <i class="fas fa-hand-holding-heart"></i>
+                </div>
+                <h3>Artisanat & savoir-faire</h3>
+                <p>Chaque parfum est élaboré avec soin par nos maîtres parfumeurs pour une qualité premium.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <h3>Livraison soignée</h3>
+                <p>Emballage premium et suivi optimisé pour une expérience client sereine et rapide.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="feature-icon">
+                    <i class="fas fa-gem"></i>
+                </div>
+                <h3>Exclusivité garantie</h3>
+                <p>Des fragrances uniques que vous ne trouverez nulle part ailleurs, créées rien que pour vous.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+                <div class="feature-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Conseil personnalisé</h3>
+                <p>Notre équipe d'experts vous guide vers le parfum idéal selon votre style et vos préférences.</p>
+            </div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+                <div class="feature-icon">
+                    <i class="fas fa-leaf"></i>
+                </div>
+                <h3>Éco-responsable</h3>
+                <p>Engagés pour la planète : packaging recyclable et ingrédients issus de sources durables.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Collections Preview -->
+    <section class="section collections-preview">
+        <div class="section-header">
+            <h2>Nos Collections</h2>
+            <p class="section-subtitle">Découvrez des fragrances pour chaque moment de votre vie.</p>
+        </div>
+        <div class="collections-grid">
+            <div class="collection-card" data-aos="fade-up">
+                <div class="collection-image">
+                    <img src="https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=600&q=80" alt="Collection Femme">
+                </div>
+                <div class="collection-overlay">
+                    <h3>Collection Femme</h3>
+                    <p>Féminité, élégance et sensualité</p>
+                    <a href="#produits" class="btn-collection">Découvrir</a>
+                </div>
+            </div>
+            <div class="collection-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="collection-image">
+                    <img src="https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=600&q=80" alt="Collection Homme">
+                </div>
+                <div class="collection-overlay">
+                    <h3>Collection Homme</h3>
+                    <p>Force, raffinement et caractère</p>
+                    <a href="#produits" class="btn-collection">Découvrir</a>
+                </div>
+            </div>
+            <div class="collection-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="collection-image">
+                    <img src="https://images.unsplash.com/photo-1615634260167-c8cdede054de?auto=format&fit=crop&w=600&q=80" alt="Collection Unisexe">
+                </div>
+                <div class="collection-overlay">
+                    <h3>Collection Unisexe</h3>
+                    <p>Pour ceux qui osent traverser les frontières</p>
+                    <a href="#produits" class="btn-collection">Découvrir</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section products" id="produits">
+        <div class="section-header">
+            <h2>Nos parfums</h2>
+            <p class="section-subtitle">Explorez notre collection de parfums artisanaux, imaginés pour vous.</p>
+        </div>
+        <div class="products-controls">
+            <div class="search-wrapper">
+                <input id="productSearch" type="search" placeholder="Rechercher un parfum..." aria-label="Rechercher un parfum">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="wishlist-preview" id="wishlistPreview">
+                <span class="wishlist-preview-label">Vos favoris :</span>
+                <span id="wishlistPreviewCount">0</span>
+            </div>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="https://via.placeholder.com/600x400?text=Parfum" alt="Parfum de démonstration">
+                    <div class="product-badge">À venir</div>
+                </div>
+                <div class="product-info">
+                    <h3>Chargement en cours...</h3>
+                    <p class="product-description">Nos parfums arrivent bientôt. Revenez dans quelques instants.</p>
+                    <div class="product-footer">
+                        <span class="price">--</span>
+                        <button class="btn-quick-add" disabled>
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="section testimonials" id="temoignages">
+        <div class="section-header">
+            <h2>Ils nous font confiance</h2>
+            <p class="section-subtitle">Découvrez les retours de nos clients enchantés par nos parfums.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card featured" data-aos="fade-up">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">« Une palette olfactive incroyable, chaque parfum est un voyage. Je recommande Barishop à tous les amoureux des belles fragrances. »</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?auto=format&fit=crop&w=200&q=80" alt="Client satisfait">
+                    <div class="author-info">
+                        <h4>Laura M.</h4>
+                        <span>Amatrice de parfums</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i clasle… en Dart ?s="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                </div>
+                <p class="testimonial-text">« Livraison rapide et emballage soigné. Le parfum tient toute la journée, et l'odeur est sublime. »</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=200&q=80" alt="Client satisfait">
+                    <div class="author-info">
+                        <h4>Maxime B.</h4>
+                        <span>Client fidèle</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">« Des parfums raffinés avec une histoire. Le service client est top et très réactif. »</p>
+                <div class="testimonial-author">
+                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" alt="Client satisfait">
+                    <div class="author-info">
+                        <h4>Émilie R.</h4>
+                        <span>Fan de nouvelles senteurs</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section blogs" id="blog">
+        <div class="section-header">
+            <h2>Notre blog</h2>
+            <p class="section-subtitle">Inspiration, conseils et tendances parfumées.</p>
+        </div>
+        <div class="blog-filters">
+            <button class="filter-btn active" data-filter="all">Tout</button>
+            <button class="filter-btn" data-filter="nouvelles">Nouveautés</button>
+            <button class="filter-btn" data-filter="conseils">Conseils</button>
+            <button class="filter-btn" data-filter="inspirations">Inspirations</button>
+        </div>
+        <div class="blogs-grid" id="blogsGrid">
+            <div class="blog-card" data-category="nouvelles" data-aos="fade-up">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1529312266894-4b271b4ff4c4?auto=format&fit=crop&w=900&q=80" alt="Nouveautés parfum">
+                    <span class="blog-category">Nouveautés</span>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-date">
+                        <i class="far fa-calendar"></i>
+                        <span>11 Mars 2026</span>
+                    </div>
+                    <h3 class="blog-title">3 parfums must-have pour le printemps</h3>
+                    <p class="blog-excerpt">Découvrez les nouvelles fragrances à porter dès maintenant, entre notes florales et accords frais.</p>
+                    <a href="blog.html?id=default-1" class="blog-link">Lire la suite <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="blog-card" data-category="conseils" data-aos="fade-up" data-aos-delay="100">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1520342868574-5fa3804e551c?auto=format&fit=crop&w=900&q=80" alt="Conseils parfum">
+                    <span class="blog-category">Conseils</span>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-date">
+                        <i class="far fa-calendar"></i>
+                        <span>28 Février 2026</span>
+                    </div>
+                    <h3 class="blog-title">Comment faire durer votre parfum toute la journée</h3>
+                    <p class="blog-excerpt">Quelques astuces simples pour fixer les notes et profiter de votre parfum plus longtemps.</p>
+                    <a href="blog.html?id=default-2" class="blog-link">Lire la suite <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+            <div class="blog-card" data-category="inspirations" data-aos="fade-up" data-aos-delay="200">
+                <div class="blog-image">
+                    <img src="https://images.unsplash.com/photo-1495125520140-4e1e17a25f17?auto=format&fit=crop&w=900&q=80" alt="Inspiration parfum">
+                    <span class="blog-category">Inspirations</span>
+                </div>
+                <div class="blog-content">
+                    <div class="blog-date">
+                        <i class="far fa-calendar"></i>
+                        <span>14 Janvier 2026</span>
+                    </div>
+                    <h3 class="blog-title">Tendances parfum 2026 : notes rares et packaging éco</h3>
+                    <p class="blog-excerpt">Les grandes tendances à suivre cette année pour choisir des parfums à la fois modernes et responsables.</p>
+                    <a href="blog.html?id=default-3" class="blog-link">Lire la suite <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section delivery-calculator" id="livraison">
+        <div class="section-header">
+            <h2>Livraison & tarifs</h2>
+            <p class="section-subtitle">Calculez le coût de livraison selon votre zone.</p>
+        </div>
+        <div class="delivery-content">
+            <i class="fas fa-truck"></i>
+            <div>
+                <h4>Frais de livraison instantanés</h4>
+                <p>Sélectionnez votre zone pour afficher les tarifs en temps réel.</p>
+            </div>
+            <form id="deliveryForm" class="delivery-form">
+                <select id="deliveryZone" name="deliveryZone">
+                    <option value="local">Local</option>
+                    <option value="region">Région</option>
+                    <option value="international">International</option>
+                </select>
+                <button type="submit" class="btn-delivery">Calculer</button>
+            </form>
+        </div>
+        <div id="deliveryResult" class="delivery-result"></div>
+    </section>
+
+    <section class="section contact" id="contact">
+        <div class="section-header">
+            <h2>Contactez-nous</h2>
+            <p class="section-subtitle">Posez vos questions ou demandez de l'aide, notre équipe est là pour vous.</p>
+        </div>
+        <div class="contact-container">
+            <div class="contact-info">
+                <h2>Besoin d'aide ?</h2>
+                <p class="contact-description">Notre équipe est à votre écoute pour toute question sur les produits, la livraison ou votre commande.</p>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Adresse</h4>
+                            <p>Bénin , Abomey-Calavi</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>lawanibarizath@gmail.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Téléphone</h4>
+                            <p>+22941998049</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="contactForm" class="contact-form">
+                <h3>Envoyez-nous un message</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="prenom" name="prenom" required placeholder="">
+                        <label for="prenom">Prénom</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="nom" name="nom" required placeholder="">
+                        <label for="nom">Nom</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" name="email" required placeholder="">
+                    <label for="email">Email</label>
+                </div>
+                <div class="form-group">
+                    <textarea id="message" name="message" rows="5" required placeholder=""></textarea>
+                    <label for="message">Message</label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit">Envoyer le message</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="section newsletter" id="newsletter">
+        <div class="section-header">
+            <h2>Ne manquez rien</h2>
+            <p class="section-subtitle">Recevez nos nouveautés et offres exclusives.</p>
+        </div>
+        <div class="newsletter-content">
+            <div class="newsletter-text">
+                <h3>Abonnez-vous à notre newsletter</h3>
+                <p>Inscrivez-vous pour être informé des lancements et promotions.</p>
+            </div>
+            <form id="newsletterForm" class="newsletter-form">
+                <div class="newsletter-input-group">
+                    <input type="email" id="newsletterEmail" name="newsletterEmail" placeholder="Votre email" required>
+                    <button type="submit" class="btn btn-newsletter">M'inscrire</button>
+                </div>
+                <p class="newsletter-disclaimer">Nous respectons votre vie privée. Aucun spam.</p>
+            </form>
+        </div>
+    </section>
+
+    <!-- CART SIDEBAR -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3>Votre panier</h3>
+            <button class="cart-close" id="cartClose" aria-label="Fermer le panier">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <p class="cart-empty">Votre panier est vide</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total</span>
+                <span id="cartTotal">0.00€</span>
+            </div>
+            <button class="btn btn-primary" id="checkoutBtn">Passer à la caisse</button>
+            <button class="btn btn-secondary btn-continue" id="continueShopping">Continuer mes achats</button>
+        </div>
+    </aside>
+
+    <!-- WISHLIST SIDEBAR -->
+    <div class="cart-overlay" id="wishlistOverlay"></div>
+    <aside class="cart-sidebar" id="wishlistSidebar">
+        <div class="cart-header">
+            <h3>Mes favoris</h3>
+            <button class="cart-close" id="wishlistClose" aria-label="Fermer les favoris">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="wishlistItems">
+            <p class="cart-empty">Votre liste de favoris est vide</p>
+        </div>
+        <div class="cart-footer">
+            <button class="btn btn-secondary btn-continue" id="wishlistContinue">Continuer mes achats</button>
+        </div>
+    </aside>
+
+    <!-- PRODUCT MODAL -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <button class="modal-close" id="productModalClose" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="productModalBody"></div>
+        </div>
+    </div>
+    <div class="cart-overlay" id="productModalOverlay"></div>
+
+    <!-- AUTH MODAL -->
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <button class="modal-close" id="authModalClose" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="auth-container">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="login">Connexion</button>
+                    <button class="auth-tab" data-tab="register">Inscription</button>
+                </div>
+                <form id="loginForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Mot de passe</label>
+                        <input type="password" id="loginPassword" required placeholder="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Se connecter</button>
+                </form>
+                <form id="registerForm" class="auth-form hidden">
+                    <div class="form-group">
+                        <label for="registerPrenom">Prénom</label>
+                        <input type="text" id="registerPrenom" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerNom">Nom</label>
+                        <input type="text" id="registerNom" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Mot de passe</label>
+                        <input type="password" id="registerPassword" required placeholder="">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerConfirmPassword">Confirmer le mot de passe</label>
+                        <input type="password" id="registerConfirmPassword" required placeholder="">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Créer un compte</button>
+                </form>
+                <div class="auth-switch">
+                    <span>Pas encore de compte ?</span>
+                    <a href="#" data-tab="register">Créer un compte</a> ·
+                    <a href="#" data-tab="login">Connexion</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="cart-overlay" id="authModalOverlay"></div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="#accueil" class="footer-logo">
+                    <span class="footer-logo-svg">✨</span>
+                    <span class="footer-logo-text">Barishop</span>
+                </a>
+                <p class="footer-tagline">Des parfums d'exception livrés chez vous, créés avec passion et savoir-faire.</p>
+            </div>
+
+            <div class="footer-links">
+                <div class="link-column">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="#accueil">Accueil</a></li>
+                        <li><a href="#produits">Parfums</a></li>
+                        <li><a href="#blog">Blog</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="link-column">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Livraison</a></li>
+                        <li><a href="#">Retours</a></li>
+                        <li><a href="#">Conditions</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-social">
+                <h4>Suivez-nous</h4>
+                <div class="social-icons">
+                    <a class="social-icon facebook" href="https://www.facebook.com/bari.wni" aria-label="Facebook">
+                        <svg width="20" height="20" viewBox="0 0 320 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M279.14 288l14.22-92.66h-88.91V129.41c0-25.35 12.42-50.06 52.24-50.06h40.42V6.26S260.43 0 225.36 0c-73.22 0-121.03 44.38-121.03 124.72V195.3H22.89V288h81.44v224h100.17V288z"/></svg>
+                    </a>
+                    <a class="social-icon instagram" href="#" aria-label="Instagram">
+                        <svg width="20" height="20" viewBox="0 0 448 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9 114.9-51.3 114.9-114.9S287.7 141 224.1 141zm0 189.6c-41.2 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.5 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.9-26.9 26.9s-26.9-12-26.9-26.9 12-26.9 26.9-26.9 26.9 12 26.9 26.9zm76.1 27.2c-1.7-35.7-9.9-67.3-36.1-93.5s-57.8-34.4-93.5-36.1c-37-2.1-147.9-2.1-184.9 0-35.7 1.7-67.3 9.9-93.5 36.1S4.3 116.4 2.6 152.1c-2.1 37-2.1 147.9 0 184.9 1.7 35.7 9.9 67.3 36.1 93.5s57.8 34.4 93.5 36.1c37 2.1 147.9 2.1 184.9 0 35.7-1.7 67.3-9.9 93.5-36.1s34.4-57.8 36.1-93.5c2.1-37 2.1-147.9 0-184.9zM398.8 388c-7.8 19.6-23 35-42.6 42.8-29.5 11.7-99.7 9-132.3 9s-102.7 2.6-132.3-9c-19.6-7.8-34.8-23.2-42.6-42.8-11.7-29.5-9-99.7-9-132.3s-2.6-102.7 9-132.3c7.8-19.6 23-35 42.6-42.8 29.5-11.7 99.7-9 132.3-9s102.7-2.6 132.3 9c19.6 7.8 34.8 23.2 42.6 42.8 11.7 29.5 9 99.7 9 132.3s2.6 102.7-9 132.3z"/></svg>
+                    </a>
+                    <a class="social-icon whatsapp" href="https://wa.me/22941998049" aria-label="WhatsApp">
+                        <svg width="20" height="20" viewBox="0 0 448 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M380.9 97.1C339-14.2 250.9-32.2 168.5 6.9 92.2 42.1 50.9 118.9 53.9 181.7c2.7 62 34.2 118.9 81.6 160.9l-30.6 111.7 114.8-30.2c38.9 21.3 82.7 32.7 129.2 32.7 72.7 0 140.5-30 188.9-84.4 35.4-40.3 56.4-91.5 56.4-145.1 0-112.1-91-203-204-203-15.6 0-31.1 1.8-45.9 5.3zm-73.6 255.5c-10.3 0-20.4-1.4-30.4-4.1-34.2-10.5-59.9-33.5-78.9-61.5l-5.7-8.3-38.2 10 10.2-37.1-7.9-12c-19.7-29.8-29.2-64.6-27.3-99.7 3.2-66.1 57.7-119 123.8-122.3 67-3.2 126.3 44 145 106.8 18.7 62.7 1.2 128.2-46.2 173.6-28.2 28.5-65.9 44.6-104.6 44.6z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> Barishop. Tous droits réservés.</p>
+            <div class="footer-actions">
+                <a href="admin.html" class="footer-admin" aria-label="Accéder à l'administration">Admin</a>
+                <a href="#" class="footer-privacy">Politique de confidentialité</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+

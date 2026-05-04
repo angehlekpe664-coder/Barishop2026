@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article - Barishop</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="mobile-menu.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <div class="background-parfums"></div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html#accueil" class="logo">
+                <span class="logo-text">Barishop</span>
+            </a>
+
+            <button id="menuToggle" class="menu-toggle" aria-label="Basculer le menu">
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+            </button>
+
+            <div class="nav-menu-container">
+                <ul class="nav-menu">
+                    <li><a href="index.html#accueil" class="nav-link">Accueil</a></li>
+                    <li><a href="index.html#produits" class="nav-link">Parfums</a></li>
+                    <li><a href="index.html#blog" class="nav-link">Blog</a></li>
+                    <li><a href="index.html#livraison" class="nav-link">Livraison</a></li>
+                    <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <button id="cartBtn" class="nav-action-btn" aria-label="Ouvrir le panier">
+                        <i class="fas fa-shopping-bag"></i>
+                        <span id="cartCount" class="cart-count">0</span>
+                    </button>
+                    <button id="userBtn" class="nav-action-btn" aria-label="Se connecter">
+                        <i class="fas fa-user"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="section blog-detail" id="blog-detail">
+        <div class="section-header">
+            <h2>Détail de l'article</h2>
+            <p class="section-subtitle">Découvrez l'article en entier, avec image et contenu complet.</p>
+        </div>
+
+        <div id="blogDetailWrapper" class="blog-detail-wrapper"></div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <a href="index.html#accueil" class="footer-logo">
+                    <span class="footer-logo-svg">✨</span>
+                    <span class="footer-logo-text">Barishop</span>
+                </a>
+                <p class="footer-tagline">Des parfums d'exception livrés chez vous, créés avec passion et savoir-faire.</p>
+            </div>
+            <div class="footer-links">
+                <div class="link-column">
+                    <h4>Navigation</h4>
+                    <ul>
+                        <li><a href="index.html#accueil">Accueil</a></li>
+                        <li><a href="index.html#produits">Parfums</a></li>
+                        <li><a href="index.html#blog">Blog</a></li>
+                        <li><a href="index.html#livraison">Livraison</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="link-column">
+                    <h4>À propos</h4>
+                    <ul>
+                        <li><a href="#">Notre histoire</a></li>
+                        <li><a href="#">Qualité</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-social">
+                <h4>Suivez-nous</h4>
+                <div class="social-icons">
+                    <a href="#" class="social-icon facebook" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-icon instagram" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-icon whatsapp" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; <span id="year"></span> Barishop. Tous droits réservés.</p>
+            <div class="footer-actions">
+                <a href="index.html#contact">Support</a>
+                <a href="admin.html" class="footer-admin" aria-label="Accéder à l'administration">Admin</a>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
+

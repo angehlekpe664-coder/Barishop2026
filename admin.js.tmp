@@ -1,0 +1,8 @@
+// Expose functions to window for onclick handlers
+window.deleteMessageById = deleteMessageById;
+window.viewMessage = viewMessage;
+window.editProduct = editProduct;
+window.deleteProductById = deleteProductById;
+window.editArticleById = editArticleById;
+window.deleteArticleById = deleteArticleById;
+window.closeModal = closeModal;
