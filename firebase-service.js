@@ -384,3 +384,30 @@ export async function deleteCart(uid) {
     }
 }
 
+// ========================================
+// NEWSLETTER FUNCTIONS
+// ========================================
+
+export async function getNewsletters() {
+    try {
+        const q = query(collection(db, "newsletters"), orderBy("date", "desc"));
+        const querySnapshot = await getDocs(q);
+        const newsletters = [];
+        querySnapshot.forEach((doc) => {
+            newsletters.push({ id: doc.id, ...doc.data() });
+        });
+        return { success: true, newsletters };
+    } catch (error) {
+        console.error("Error getting newsletters:", error);
+        return { success: false, message: error.message };
+    }
+}
+
+export async function deleteNewsletter(id) {
+    try {
+        await deleteDoc(doc(db, "newsletters", id));
+        return { success: true, message: "Abonné supprimé avec succès" };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+}

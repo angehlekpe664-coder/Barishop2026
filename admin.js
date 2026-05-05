@@ -3,7 +3,7 @@
 // ========================================
 
 // Import Firebase functions
-import { signIn, logOut, onAuthChange, getArticles, getArticle, addArticle, updateArticle, deleteArticle, getProducts, getProduct, addProduct, updateProduct, deleteProduct, getMessages, deleteMessage, getCarts, deleteCart } from './firebase-service.js';
+import { signIn, logOut, onAuthChange, getArticles, getArticle, addArticle, updateArticle, deleteArticle, getProducts, getProduct, addProduct, updateProduct, deleteProduct, getMessages, deleteMessage, getCarts, deleteCart, getNewsletters, deleteNewsletter } from './firebase-service.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     initAuth();
@@ -103,6 +103,7 @@ function showAdminContent(user) {
     loadOrders();
     loadProducts();
     loadArticles();
+    loadNewsletters();
     initSettingsForm();
     
     // Setup button event listeners AFTER admin content is shown
@@ -178,7 +179,8 @@ function initSidebar() {
         'orders': 'Commandes',
         'products': 'Produits',
         'blogs': 'Blog',
-        'settings': 'Paramètres'
+        'settings': 'Paramètres',
+        'newsletters': 'Newsletter'
     };
 
     // Navigation items click
@@ -819,6 +821,57 @@ window.viewMessage = viewMessage;
 window.closeModal = closeModal;
 window.removeProductImage = removeProductImage;
 window.removeArticleImage = removeArticleImage;
+window.deleteNewsletterById = deleteNewsletterById;
+
+// ========================================
+// NEWSLETTER SUBSCRIBERS
+// ========================================
+async function loadNewsletters() {
+    try {
+        const result = await getNewsletters();
+        if (result.success) {
+            displayNewsletters(result.newsletters);
+            const badge = document.getElementById('newsletterBadge');
+            if (badge) {
+                badge.textContent = result.newsletters.length;
+                badge.style.display = result.newsletters.length > 0 ? 'inline-block' : 'none';
+            }
+            const count = document.getElementById('newsletterCount');
+            if (count) count.textContent = `${result.newsletters.length} abonné(s)`;
+        }
+    } catch(e) {
+        console.error('Error loading newsletters:', e);
+    }
+}
+
+function displayNewsletters(newsletters) {
+    const tbody = document.getElementById('newsletterTableBody');
+    if (!newsletters || newsletters.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="loading">Aucun abonné pour le moment.</td></tr>';
+        return;
+    }
+    tbody.innerHTML = newsletters.map((sub, index) => `
+        <tr>
+            <td>${index + 1}</td>
+            <td><strong>${escapeHtml(sub.email)}</strong></td>
+            <td>${formatDate(sub.date)}</td>
+            <td><button class="btn-delete" onclick="deleteNewsletterById('${sub.id}')"><i class="fas fa-trash"></i></button></td>
+        </tr>
+    `).join('');
+}
+
+async function deleteNewsletterById(id) {
+    if (confirm('Supprimer cet abonné de la newsletter ?')) {
+        const result = await deleteNewsletter(id);
+        if (result.success) {
+            showNotification('Abonné supprimé', 'success');
+            loadNewsletters();
+        } else {
+            showNotification('Erreur lors de la suppression', 'error');
+        }
+    }
+}
+
 
 // ========================================
 // UTILITY FUNCTIONS

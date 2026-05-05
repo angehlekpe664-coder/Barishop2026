@@ -1135,13 +1135,42 @@ function initContactForm() {
     const form = document.getElementById('contactForm');
     if (!form) return;
 
+    // === CAPTCHA SETUP ===
+    let captchaAnswer = 0;
+
+    function generateCaptcha() {
+        const a = Math.floor(Math.random() * 12) + 1;
+        const b = Math.floor(Math.random() * 10) + 1;
+        const ops = ['+', '-', '×'];
+        const op = ops[Math.floor(Math.random() * 2)]; // + or - only for simplicity
+        let answer;
+        if (op === '+') { answer = a + b; }
+        else if (op === '-') { answer = a - b; }
+        else { answer = a * b; }
+        document.getElementById('captchaQuestion').textContent = `${a} ${op} ${b}`;
+        captchaAnswer = answer;
+        const input = document.getElementById('captchaAnswer');
+        if (input) input.value = '';
+    }
+
+    generateCaptcha();
+
+    document.getElementById('captchaRefresh')?.addEventListener('click', generateCaptcha);
+
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        // === Verify CAPTCHA ===
+        const userAnswer = parseInt(document.getElementById('captchaAnswer')?.value);
+        if (isNaN(userAnswer) || userAnswer !== captchaAnswer) {
+            showNotification('Réponse CAPTCHA incorrecte. Veuillez réessayer.', 'error');
+            generateCaptcha();
+            return;
+        }
+
         const submitBtn = form.querySelector('.btn-submit');
-        const originalText = submitBtn.textContent;
-        
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Envoi en cours...';
+        const originalHTML = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Envoi en cours...</span>';
         submitBtn.disabled = true;
 
         const formData = new FormData(form);
@@ -1157,14 +1186,14 @@ function initContactForm() {
                 ...messageData,
                 date: new Date().toISOString()
             });
-            
-            showNotification("Merci ! Votre message a bien été envoyé.", "success");
+            showNotification('Merci ! Votre message a bien été envoyé.', 'success');
             form.reset();
+            generateCaptcha();
         } catch (error) {
             console.error('Error sending message:', error);
-            showNotification("Erreur lors de l'envoi du message.", "error");
+            showNotification("Erreur lors de l'envoi du message.", 'error');
         } finally {
-            submitBtn.innerHTML = originalText;
+            submitBtn.innerHTML = originalHTML;
             submitBtn.disabled = false;
         }
     });
@@ -1400,22 +1429,42 @@ function initNewsletterForm() {
     const form = document.getElementById('newsletterForm');
     if (!form) return;
 
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        const email = document.getElementById('newsletterEmail').value;
+        const email = document.getElementById('newsletterEmail').value.trim();
         const submitBtn = form.querySelector('.btn-newsletter');
-        
         const originalHTML = submitBtn.innerHTML;
+
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         submitBtn.disabled = true;
-        
-        setTimeout(() => {
-            showNotification("Merci ! Votre inscription à la newsletter est confirmée.", "success");
-            form.reset();
+
+        try {
+            // Check if already subscribed
+            const q = query(collection(db, "newsletters"), orderBy("date", "desc"));
+            const snapshot = await getDocs(q);
+            let alreadySubscribed = false;
+            snapshot.forEach(doc => {
+                if (doc.data().email === email) alreadySubscribed = true;
+            });
+
+            if (alreadySubscribed) {
+                showNotification('Vous êtes déjà abonné(e) à notre newsletter !', 'info');
+            } else {
+                await addDoc(collection(db, "newsletters"), {
+                    email,
+                    date: new Date().toISOString()
+                });
+                showNotification('Merci ! Votre inscription à la newsletter est confirmée.', 'success');
+                form.reset();
+            }
+        } catch (error) {
+            console.error('Newsletter error:', error);
+            showNotification("Erreur lors de l'inscription. Veuillez réessayer.", 'error');
+        } finally {
             submitBtn.innerHTML = originalHTML;
             submitBtn.disabled = false;
-        }, 1500);
+        }
     });
 }
 

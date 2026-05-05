@@ -480,7 +480,23 @@
                     <textarea id="message" name="message" rows="5" required placeholder=""></textarea>
                     <label for="message">Message</label>
                 </div>
-                <button type="submit" class="btn btn-primary btn-submit">Envoyer le message</button>
+                <div class="form-group captcha-group">
+                    <div class="captcha-box">
+                        <span class="captcha-label">Vérification anti-robot</span>
+                        <div class="captcha-equation">
+                            <span id="captchaQuestion" class="captcha-question"></span>
+                            <span class="captcha-equals">=</span>
+                            <input type="number" id="captchaAnswer" name="captchaAnswer" placeholder="?" required autocomplete="off">
+                        </div>
+                        <button type="button" id="captchaRefresh" class="captcha-refresh" title="Nouvelle question">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-submit" id="contactSubmitBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Envoyer le message</span>
+                </button>
             </form>
         </div>
     </section>
