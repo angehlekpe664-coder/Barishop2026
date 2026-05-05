@@ -237,6 +237,8 @@ async function loadMessages() {
     if (result.success) {
         displayMessages(result.messages);
         updateMessageBadge(result.messages.length);
+        const totalMessagesEl = document.getElementById('totalMessages');
+        if (totalMessagesEl) totalMessagesEl.textContent = result.messages.length;
     } else {
         displayNoMessages();
     }
@@ -324,6 +326,8 @@ async function loadOrders() {
     if (result.success) {
         displayOrders(result.carts);
         updateOrdersBadge(result.carts.length);
+        const totalOrdersEl = document.getElementById('totalOrders');
+        if (totalOrdersEl) totalOrdersEl.textContent = result.carts.length;
     } else {
         displayNoOrders();
     }
@@ -388,6 +392,8 @@ async function loadProducts() {
     const result = await getProducts();
     if (result.success) {
         displayProducts(result.products);
+        const totalProductsEl = document.getElementById('totalProducts');
+        if (totalProductsEl) totalProductsEl.textContent = result.products.length;
     } else {
         displayNoProducts();
     }
@@ -563,6 +569,8 @@ async function loadArticles() {
     const result = await getArticles();
     if (result.success) {
         displayArticles(result.articles);
+        const totalBlogsEl = document.getElementById('totalBlogs');
+        if (totalBlogsEl) totalBlogsEl.textContent = result.articles.length;
     } else {
         displayNoArticles();
     }
