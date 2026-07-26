@@ -3,7 +3,7 @@
 // ========================================
 
 // Import Firebase functions
-import { signIn, logOut, onAuthChange, getArticles, getArticle, addArticle, updateArticle, deleteArticle, getProducts, getProduct, addProduct, updateProduct, deleteProduct, getMessages, deleteMessage, getCarts, deleteCart, getNewsletters, deleteNewsletter } from './firebase-service.js';
+import { signIn, logOut, onAuthChange, getArticles, getArticle, addArticle, updateArticle, deleteArticle, getProducts, getProduct, addProduct, updateProduct, deleteProduct, getMessages, deleteMessage, getCarts, deleteCart, getNewsletters, deleteNewsletter, getOrders, updateOrderStatus, deleteOrder } from './firebase-service.js';
 
 document.addEventListener('DOMContentLoaded', function() {
     initAuth();
@@ -243,6 +243,8 @@ async function loadMessages() {
         if (totalMessagesEl) totalMessagesEl.textContent = result.messages.length;
     } else {
         displayNoMessages();
+        console.error("Error loading messages:", result.message);
+        showNotification("Erreur lors du chargement des messages: " + result.message, "error");
     }
 }
 
@@ -320,53 +322,123 @@ async function deleteMessageById(id) {
 }
 
 // ========================================
-// ORDERS / CARTS MANAGEMENT
+// ORDERS MANAGEMENT
 // ========================================
 
 async function loadOrders() {
-    const result = await getCarts();
-    if (result.success) {
-        displayOrders(result.carts);
-        updateOrdersBadge(result.carts.length);
-        const totalOrdersEl = document.getElementById('totalOrders');
-        if (totalOrdersEl) totalOrdersEl.textContent = result.carts.length;
-    } else {
-        displayNoOrders();
+    try {
+        const orderResult = await getOrders();
+        const cartResult = await getCarts();
+        
+        let allItems = [];
+        let errors = [];
+        
+        if (orderResult.success) {
+            allItems = [...orderResult.orders];
+        } else {
+            errors.push("Commandes: " + orderResult.message);
+        }
+        
+        if (cartResult.success) {
+            // Add carts that aren't already represented in orders
+            const carts = cartResult.carts.map(c => ({
+                ...c,
+                status: c.status || 'Panier',
+                nomclient: c.nomclient || c.email || 'Utilisateur',
+                totalPrice: c.totalPrice || c.total || 0,
+                date: c.date || c.lastUpdated
+            }));
+            allItems = [...allItems, ...carts];
+        } else {
+            errors.push("Paniers: " + cartResult.message);
+        }
+
+        if (errors.length > 0) {
+            console.error("Error loading orders/carts:", errors.join(", "));
+            showNotification("Erreur lors du chargement des commandes: " + errors.join(" | "), "error");
+        }
+
+        // Sort all items by date descending
+        allItems.sort((a, b) => new Date(b.date || b.lastUpdated) - new Date(a.date || a.lastUpdated));
+
+        const tbody = document.getElementById('ordersTableBody');
+        if (allItems.length > 0) {
+            displayOrders(allItems);
+            updateOrdersBadge(allItems.length);
+            const totalOrdersEl = document.getElementById('totalOrders');
+            if (totalOrdersEl) totalOrdersEl.textContent = allItems.length;
+        } else {
+            if (tbody) {
+                if (orderResult && !orderResult.success && cartResult && !cartResult.success) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading" style="color: red;">Erreur de connexion à la base de données</td></tr>';
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" class="loading">Aucune donnée trouvée (ni commandes, ni paniers)</td></tr>';
+                }
+            }
+        }
+    } catch (error) {
+        console.error("Error loading data:", error);
+        showNotification('Erreur lors du chargement : ' + error.message, 'error');
     }
 }
 
-function displayOrders(carts) {
+function displayOrders(orders) {
     const tbody = document.getElementById('ordersTableBody');
-    if (!carts || carts.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="loading">Aucune commande</td></tr>';
+    if (!orders || orders.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="loading">Aucune commande</td></tr>';
         return;
     }
 
-    tbody.innerHTML = carts.map(cart => {
-        const userName = cart.name || cart.uid || '-';
-        const email = cart.email || '-';
-        const total = parseFloat(cart.total || 0).toFixed(2);
-        const updated = formatDate(cart.lastUpdated);
-        const itemsList = Array.isArray(cart.items) ? cart.items.map(i => `${i.name} (${i.quantity})`).join(', ') : '-';
+    tbody.innerHTML = orders.map(order => {
+        const userName = order.nomclient || '-';
+        const phone = order.numeroSend || '-';
+        const email = order.email || '-';
+        const contactInfo = email !== '-' && phone !== '-' ? `${email} / ${phone}` : (email !== '-' ? email : phone);
+        const total = parseFloat(order.totalPrice || 0).toFixed(2);
+        const updated = formatDate(order.date || order.lastUpdated);
+        
+        let itemsList = '-';
+        if (order.article && Array.isArray(order.article)) {
+            itemsList = order.article.map(item => Object.keys(item)[0]).join(', ');
+        }
 
         return `
             <tr>
                 <td>${escapeHtml(userName)}</td>
-                <td>${escapeHtml(email)}</td>
-                <td>${total}€</td>
+                <td>${escapeHtml(contactInfo)}</td>
+                <td>${total} FCFA</td>
                 <td>${escapeHtml(itemsList)}</td>
                 <td>${updated}</td>
                 <td>
-                    <button class="btn-delete" onclick="deleteOrderById('${cart.id}')"><i class="fas fa-trash"></i></button>
+                    <select onchange="changeOrderStatus('${order.id}', this.value)" class="status-select ${order.status === 'Payé' ? 'status-paid' : ''}">
+                        <option value="En attente de paiement" ${order.status === 'En attente de paiement' ? 'selected' : ''}>En attente</option>
+                        <option value="Payé" ${order.status === 'Payé' ? 'selected' : ''}>Payé</option>
+                        <option value="En préparation" ${order.status === 'En préparation' ? 'selected' : ''}>En préparation</option>
+                        <option value="Expédié" ${order.status === 'Expédié' ? 'selected' : ''}>Expédié</option>
+                        <option value="Livré" ${order.status === 'Livré' ? 'selected' : ''}>Livré</option>
+                    </select>
+                </td>
+                <td>
+                    <button class="btn-delete" onclick="deleteOrderById('${order.id}')"><i class="fas fa-trash"></i></button>
                 </td>
             </tr>
         `;
     }).join('');
 }
 
+window.changeOrderStatus = async function(id, newStatus) {
+    const result = await updateOrderStatus(id, newStatus);
+    if (result.success) {
+        showNotification('Statut mis à jour', 'success');
+    } else {
+        showNotification('Erreur de mise à jour du statut', 'error');
+        loadOrders(); // Reload to revert UI change
+    }
+};
+
 function displayNoOrders() {
     const tbody = document.getElementById('ordersTableBody');
-    tbody.innerHTML = '<tr><td colspan="6" class="loading">Aucune commande</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="loading">Aucune commande</td></tr>';
 }
 
 function updateOrdersBadge(count) {
@@ -375,9 +447,9 @@ function updateOrdersBadge(count) {
     badge.style.display = count > 0 ? 'inline-block' : 'none';
 }
 
-async function deleteOrderById(uid) {
+window.deleteOrderById = async function(id) {
     if (confirm('Êtes-vous sûr de vouloir supprimer cette commande ?')) {
-        const result = await deleteCart(uid);
+        const result = await deleteOrder(id);
         if (result.success) {
             showNotification('Commande supprimée', 'success');
             loadOrders();
@@ -385,7 +457,7 @@ async function deleteOrderById(uid) {
             showNotification('Erreur lors de la suppression', 'error');
         }
     }
-}
+};
 
 // ========================================
 // PRODUCTS MANAGEMENT
@@ -398,6 +470,12 @@ async function loadProducts() {
         if (totalProductsEl) totalProductsEl.textContent = result.products.length;
     } else {
         displayNoProducts();
+        console.error("Error loading products:", result.message);
+        showNotification("Erreur lors du chargement des produits: " + result.message, "error");
+        const grid = document.getElementById('productsGrid');
+        if (grid) {
+            grid.innerHTML = `<p class="no-items" style="color: red;">Erreur de connexion: ${result.message}</p>`;
+        }
     }
 }
 
@@ -412,12 +490,12 @@ function displayProducts(products) {
     grid.innerHTML = products.map(product => `
         <div class="product-admin-card">
             <div class="product-admin-image">
-                <img src="${product.image || 'https://via.placeholder.com/300x200?text=Produit'}" alt="${escapeHtml(product.name)}" onerror="this.src='https://via.placeholder.com/300x200?text=Produit'">
+                <img src="${(product.image && !product.image.includes('placeholder')) ? product.image : 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80'}" alt="${escapeHtml(product.name)}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80'">
             </div>
             <div class="product-admin-info">
                 <h3>${escapeHtml(product.name || '')}</h3>
                 <p>${escapeHtml(product.description || '')}</p>
-                <div class="product-price">${parseFloat(product.price || 0).toFixed(2)}€</div>
+                <div class="product-price">${parseFloat(product.price || 0).toFixed(2)} FCFA</div>
             </div>
             <div class="product-actions">
                 <button class="btn-edit" onclick="editProduct('${product.id}')"><i class="fas fa-edit"></i> Modifier</button>
@@ -458,7 +536,7 @@ function showProductModal(product = null) {
             </div>
             
             <div class="form-group">
-                <label>Prix (€) *</label>
+                <label>Prix (FCFA) *</label>
                 <input type="number" name="price" value="${product ? product.price : ''}" step="0.01" min="0" required>
             </div>
             
@@ -575,6 +653,12 @@ async function loadArticles() {
         if (totalBlogsEl) totalBlogsEl.textContent = result.articles.length;
     } else {
         displayNoArticles();
+        console.error("Error loading articles:", result.message);
+        showNotification("Erreur lors du chargement des articles de blog: " + result.message, "error");
+        const grid = document.getElementById('blogsGrid');
+        if (grid) {
+            grid.innerHTML = `<p class="no-items" style="color: red;">Erreur de connexion: ${result.message}</p>`;
+        }
     }
 }
 
@@ -589,13 +673,13 @@ function displayArticles(articles) {
     grid.innerHTML = articles.map(article => `
         <div class="blog-admin-card">
             <div class="blog-admin-image">
-                <img src="${article.image || 'https://via.placeholder.com/300x200?text=Article'}" alt="${escapeHtml(article.title)}" onerror="this.src='https://via.placeholder.com/300x200?text=Article'">
+                <img src="${(article.image && !article.image.includes('placeholder')) ? article.image : 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=600&q=80'}" alt="${escapeHtml(article.title)}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=600&q=80'">
             </div>
             <div class="blog-admin-info">
                 <span class="blog-category-tag">${escapeHtml(article.category || 'Nouveautés')}</span>
                 <h3>${escapeHtml(article.title || '')}</h3>
                 <p>${escapeHtml(article.excerpt || '')}</p>
-                ${parseFloat(article.price || 0) > 0 ? `<div class="blog-price">${parseFloat(article.price).toFixed(2)}€</div>` : ''}
+                ${parseFloat(article.price || 0) > 0 ? `<div class="blog-price">${parseFloat(article.price).toFixed(2)} FCFA</div>` : ''}
                 <div class="blog-date">${formatDate(article.date)}</div>
             </div>
             <div class="blog-actions">
@@ -653,7 +737,7 @@ function showArticleModal(article = null) {
             </div>
             
             <div class="form-group">
-                <label>Prix (€) - Mettre 0 pour un article gratuit</label>
+                <label>Prix (FCFA) - Mettre 0 pour un article gratuit</label>
                 <input type="number" name="price" value="${article ? article.price : 0}" step="0.01" min="0">
             </div>
             
@@ -838,6 +922,13 @@ async function loadNewsletters() {
             }
             const count = document.getElementById('newsletterCount');
             if (count) count.textContent = `${result.newsletters.length} abonné(s)`;
+        } else {
+            console.error("Error loading newsletters:", result.message);
+            showNotification("Erreur lors du chargement de la newsletter: " + result.message, "error");
+            const tbody = document.getElementById('newsletterTableBody');
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="4" class="loading" style="color: red;">Erreur de connexion à la base de données</td></tr>';
+            }
         }
     } catch(e) {
         console.error('Error loading newsletters:', e);

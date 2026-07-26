@@ -1211,3 +1211,17 @@ tbody tr:hover {
     margin-top: 5px;
 }
 
+
+.status-select {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background-color: #f8f9fa;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+.status-paid {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}

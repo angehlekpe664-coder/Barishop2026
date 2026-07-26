@@ -3,41 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Barishop propose des parfums d'exception, des conseils parfumés et des nouveautés inspirantes. Découvrez votre nouvelle fragrance préférée avec une livraison soignée.">
-    <meta name="keywords" content="parfum, fragrances, parfum français, conseils parfum, blog parfum, livraison parfum">
+    <meta name="description" content="Barishop propose des parfums d'exception, des conseils parfumés et des nouveautés inspirantes. Découvrez votre nouvelle fragrance préférée avec livraison rapide au Bénin.">
+    <meta name="keywords" content="parfum, fragrances, parfum bénin, parfum abomey-calavi, boutique parfum bénin, conseils parfum, blog parfum, livraison parfum bénin, barishop, barishop site">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://barishop.example/">
+    <link rel="canonical" href="https://barishop.site/">
+    <meta name="google-site-verification" content="gr9SlliWB-TwUkvFifSN3u-4yzK0xmk7bFKcMk965iw" />
 
-    <meta property="og:title" content="Barishop - Parfums d'exception">
-    <meta property="og:description" content="Parfums artisanaux, conseils et tendances. Explorez nos sélections parfumées et trouvez votre signature olfactive.">
+
+    <!-- Geo Local SEO -->
+    <meta name="geo.region" content="BJ-OU">
+    <meta name="geo.placename" content="Abomey-Calavi">
+    <meta name="geo.position" content="6.448524;2.35564">
+    <meta name="ICBM" content="6.448524, 2.35564">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:title" content="Barishop - Boutique de Parfums d'Exception au Bénin">
+    <meta property="og:description" content="Parfums artisanaux, conseils olfactifs et livraisons au Bénin. Découvrez votre nouvelle signature parfumée sur Barishop.">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://barishop.example/">
+    <meta property="og:url" content="https://barishop.site/">
     <meta property="og:image" content="https://images.unsplash.com/photo-1552281298-bf8b0008ab53?auto=format&fit=crop&w=1600&q=80">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Barishop - Parfums d'exception">
-    <meta name="twitter:description" content="Parfums artisanaux, conseils et tendances. Explorez nos sélections parfumées et trouvez votre signature olfactive.">
+    <meta property="og:locale" content="fr_FR">
 
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Barishop - Boutique de Parfums d'Exception au Bénin">
+    <meta name="twitter:description" content="Parfums artisanaux, conseils olfactifs et livraisons au Bénin. Découvrez votre nouvelle signature parfumée sur Barishop.">
+
+    <!-- Structured Data (JSON-LD) -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Barishop",
-      "url": "https://barishop.example/",
-      "logo": "https://images.unsplash.com/photo-1552281298-bf8b0008ab53?auto=format&fit=crop&w=1600&q=80",
-      "sameAs": [
-        "https://www.facebook.com/bari.wni",    
-        "https://www.instagram.com/",
-        "https://wa.me/22941998049"
-      ],
-      "description": "Barishop propose des parfums artisanaux, des conseils parfumés et des nouveautés inspirantes.",
-      "contactPoint": [{
-        "@type": "ContactPoint",
-        "telephone": "+33 1 23 45 67 89",
-        "contactType": "customer support",
-        "availableLanguage": ["fr", "en"]
-      }]
-    }
+    [
+      {
+        "@context": "https://schema.org",
+        "@type": "Store",
+        "name": "Barishop",
+        "url": "https://barishop.site/",
+        "logo": "https://barishop.site/logo.png",
+        "image": "https://images.unsplash.com/photo-1552281298-bf8b0008ab53?auto=format&fit=crop&w=1600&q=80",
+        "description": "Barishop propose des parfums d'exception, des conseils parfumés et des nouveautés inspirantes avec livraison soignée au Bénin.",
+        "telephone": "+2290157576892",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Abomey-Calavi",
+          "addressLocality": "Abomey-Calavi",
+          "addressCountry": "BJ"
+        },
+        "sameAs": [
+          "https://www.facebook.com/bari.wni",
+          "https://wa.me/2290157576892"
+        ]
+      },
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Barishop",
+        "url": "https://barishop.site/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://barishop.site/#produits?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+    ]
     </script>
+
+
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 
     <title>Barishop - Parfums d'exception</title>
 
@@ -53,6 +84,9 @@
 
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- TalyPay SDK -->
+    <script src="https://www.talypay-me.com/js-sdk/talypay-sdk.js"></script>
 </head>
 <body>
 
@@ -104,6 +138,14 @@
     </nav>
 
     <section class="hero" id="accueil">
+        <!-- Ambient Animated Background Orbs (Exclusive to Hero Section) -->
+        <div class="hero-ambient-orbs">
+            <div class="hero-rotate-orb hero-orb-1"></div>
+            <div class="hero-rotate-orb hero-orb-2"></div>
+            <div class="hero-rotate-orb hero-orb-3"></div>
+            <div class="hero-orb-center-glow"></div>
+        </div>
+
         <div class="hero-slideshow">
             <div class="slide"></div>
             <div class="slide"></div>
@@ -140,7 +182,7 @@
                 <i class="fas fa-shipping-fast"></i>
                 <div>
                     <h4>Livraison Offerte</h4>
-                    <p> dès 100€ d'achat</p>
+                    <p> dès 100 FCFA d'achat</p>
                 </div>
             </div>
             <div class="trust-badge" data-aos="fade-up" data-aos-delay="100">
@@ -277,7 +319,7 @@
         <div class="products-grid">
             <div class="product-card">
                 <div class="product-image">
-                    <img src="https://via.placeholder.com/600x400?text=Parfum" alt="Parfum de démonstration">
+                    <img src="https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80" alt="Parfum de démonstration">
                     <div class="product-badge">À venir</div>
                 </div>
                 <div class="product-info">
@@ -316,7 +358,7 @@
             </div>
             <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
                 <div class="testimonial-stars">
-                    <i class="fas fa-star"></i><i clasle… en Dart ?s="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                 </div>
                 <p class="testimonial-text">« Livraison rapide et emballage soigné. Le parfum tient toute la journée, et l'odeur est sublime. »</p>
                 <div class="testimonial-author">
@@ -357,7 +399,7 @@
         <div class="blogs-grid" id="blogsGrid">
             <div class="blog-card" data-category="nouvelles" data-aos="fade-up">
                 <div class="blog-image">
-                    <img src="https://images.unsplash.com/photo-1529312266894-4b271b4ff4c4?auto=format&fit=crop&w=900&q=80" alt="Nouveautés parfum">
+                    <img src="https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=900&q=80" alt="Nouveautés parfum">
                     <span class="blog-category">Nouveautés</span>
                 </div>
                 <div class="blog-content">
@@ -372,7 +414,7 @@
             </div>
             <div class="blog-card" data-category="conseils" data-aos="fade-up" data-aos-delay="100">
                 <div class="blog-image">
-                    <img src="https://images.unsplash.com/photo-1520342868574-5fa3804e551c?auto=format&fit=crop&w=900&q=80" alt="Conseils parfum">
+                    <img src="https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=80" alt="Conseils parfum">
                     <span class="blog-category">Conseils</span>
                 </div>
                 <div class="blog-content">
@@ -387,7 +429,7 @@
             </div>
             <div class="blog-card" data-category="inspirations" data-aos="fade-up" data-aos-delay="200">
                 <div class="blog-image">
-                    <img src="https://images.unsplash.com/photo-1495125520140-4e1e17a25f17?auto=format&fit=crop&w=900&q=80" alt="Inspiration parfum">
+                    <img src="https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=900&q=80" alt="Inspiration parfum">
                     <span class="blog-category">Inspirations</span>
                 </div>
                 <div class="blog-content">
@@ -536,7 +578,7 @@
         <div class="cart-footer">
             <div class="cart-total">
                 <span>Total</span>
-                <span id="cartTotal">0.00€</span>
+                <span id="cartTotal">0.00 FCFA</span>
             </div>
             <button class="btn btn-primary" id="checkoutBtn">Passer à la caisse</button>
             <button class="btn btn-secondary btn-continue" id="continueShopping">Continuer mes achats</button>
@@ -584,35 +626,35 @@
                 </div>
                 <form id="loginForm" class="auth-form">
                     <div class="form-group">
-                        <label for="loginEmail">Email</label>
                         <input type="email" id="loginEmail" required placeholder="">
+                        <label for="loginEmail">Email</label>
                     </div>
                     <div class="form-group">
-                        <label for="loginPassword">Mot de passe</label>
                         <input type="password" id="loginPassword" required placeholder="">
+                        <label for="loginPassword">Mot de passe</label>
                     </div>
                     <button type="submit" class="btn btn-primary">Se connecter</button>
                 </form>
                 <form id="registerForm" class="auth-form hidden">
                     <div class="form-group">
-                        <label for="registerPrenom">Prénom</label>
                         <input type="text" id="registerPrenom" required placeholder="">
+                        <label for="registerPrenom">Prénom</label>
                     </div>
                     <div class="form-group">
-                        <label for="registerNom">Nom</label>
                         <input type="text" id="registerNom" required placeholder="">
+                        <label for="registerNom">Nom</label>
                     </div>
                     <div class="form-group">
-                        <label for="registerEmail">Email</label>
                         <input type="email" id="registerEmail" required placeholder="">
+                        <label for="registerEmail">Email</label>
                     </div>
                     <div class="form-group">
-                        <label for="registerPassword">Mot de passe</label>
                         <input type="password" id="registerPassword" required placeholder="">
+                        <label for="registerPassword">Mot de passe</label>
                     </div>
                     <div class="form-group">
-                        <label for="registerConfirmPassword">Confirmer le mot de passe</label>
                         <input type="password" id="registerConfirmPassword" required placeholder="">
+                        <label for="registerConfirmPassword">Confirmer le mot de passe</label>
                     </div>
                     <button type="submit" class="btn btn-primary">Créer un compte</button>
                 </form>
@@ -625,6 +667,51 @@
         </div>
     </div>
     <div class="cart-overlay" id="authModalOverlay"></div>
+
+    <!-- PAYMENT MODAL (TALYPAY) -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <button class="modal-close" id="paymentModalClose" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="payment-container">
+                <h2 style="margin-bottom: 1rem; font-family: 'Playfair Display', serif;">Finaliser la commande</h2>
+                <p style="margin-bottom: 1.5rem; color: #666;">Paiement sécurisé via <strong>TalyPay</strong></p>
+                <div style="background: #f8f5ff; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: center;">
+                    <span style="display: block; font-size: 0.9rem; color: #6b21a8;">Montant total à payer</span>
+                    <span id="paymentModalTotal" style="font-size: 1.5rem; font-weight: bold; color: #1a1a1a;">0.00 FCFA</span>
+                </div>
+                <form id="paymentForm" class="auth-form">
+                    <div class="form-group">
+                        <select id="paymentMethod" required>
+                            <option value="mtn_momo">MTN Mobile Money (MoMo)</option>
+                            <option value="moov_money">Moov Money (Flooz)</option>
+                            <option value="celtiis_money">Celtiis Cash</option>
+                            <option value="card">Carte Bancaire (Visa / Mastercard)</option>
+                        </select>
+                        <label for="paymentMethod">Moyen de paiement</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="paymentNom" required placeholder=" " autocomplete="name">
+                        <label for="paymentNom">Nom complet</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="paymentPhone" required placeholder=" " autocomplete="tel">
+                        <label for="paymentPhone">Numéro de téléphone</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="paymentEmail" required placeholder=" " autocomplete="email">
+                        <label for="paymentEmail">Email (pour le reçu)</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="paymentSubmitBtn" style="width: 100%; display: flex; justify-content: center; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-lock"></i>
+                        <span>Payer maintenant</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="cart-overlay" id="paymentModalOverlay"></div>
 
     <!-- FOOTER -->
     <footer class="footer">
@@ -681,6 +768,19 @@
             </div>
         </div>
     </footer>
+
+    <!-- Floating WhatsApp Button (Optimisé Mobile) -->
+    <a href="https://wa.me/2290157576892?text=Bonjour%20Barishop,%20je%20souhaite%20des%20informations%20sur%20vos%20parfums" 
+       class="whatsapp-float-btn" 
+       target="_blank" 
+       rel="noopener noreferrer" 
+       aria-label="Discuter sur WhatsApp">
+        <div class="whatsapp-icon-wrapper">
+            <i class="fab fa-whatsapp"></i>
+            <span class="whatsapp-badge">1</span>
+        </div>
+        <span class="whatsapp-text">Besoin d'aide ? <strong>WhatsApp</strong></span>
+    </a>
 
     <script type="module" src="script.js"></script>
 </body>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paiement Réussi - Barishop</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .success-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f5ff 0%, #ffffff 100%);
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .success-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(107, 33, 168, 0.1);
+            max-width: 600px;
+            width: 100%;
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #22c55e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.3);
+        }
+        .success-card h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #1a1a1a;
+            margin-bottom: 1rem;
+        }
+        .success-card p {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .order-id {
+            background: #f3e8ff;
+            color: #6b21a8;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+        .btn-home {
+            display: inline-block;
+            background: #6b21a8;
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(107, 33, 168, 0.3);
+        }
+        .btn-print {
+            background: white;
+            border: 1px solid #6b21a8;
+            color: #6b21a8;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: 0.3s;
+        }
+        .btn-print:hover {
+            background: #f8f5ff;
+            transform: translateY(-2px);
+        }
+        
+        /* Receipt layout */
+        .receipt-box {
+            margin-top: 1.5rem;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 1.5rem;
+            text-align: left;
+        }
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.6rem;
+            font-size: 0.95rem;
+        }
+        .receipt-label {
+            color: #718096;
+        }
+        .receipt-value {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        .receipt-items-container {
+            margin: 1.2rem 0;
+            background: #fcfaff;
+            border: 1px solid #f3e8ff;
+            padding: 1.2rem;
+            border-radius: 16px;
+        }
+        .receipt-item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            .success-page {
+                padding: 0;
+                background: none;
+                height: auto;
+                min-height: auto;
+            }
+            .success-card {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .btn-home, .btn-print, .success-icon, .success-card h1, .success-card p {
+                display: none !important;
+            }
+            .receipt-box {
+                border-top: none;
+                padding-top: 0;
+            }
+            .receipt-box h3 {
+                font-size: 1.6rem;
+                text-align: center;
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-page">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+            <h1>Merci pour votre commande !</h1>
+            <p>Votre paiement a été traité avec succès par TalyPay. Nous préparons votre colis avec le plus grand soin.</p>
+            <div class="order-id" id="displayOrderId">Commande #...</div>
+
+            <!-- Receipt Box -->
+            <div class="receipt-box" id="receiptBox" style="display: none;">
+                <h3 style="font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 1.2rem; color: #1a1a1a; text-align: center;">Reçu de paiement</h3>
+                
+                <div class="receipt-row">
+                    <span class="receipt-label">Numéro de Commande</span>
+                    <span class="receipt-value" id="receiptOrderId">--</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Date</span>
+                    <span class="receipt-value" id="receiptDate">--</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Client</span>
+                    <span class="receipt-value" id="receiptClient">--</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Téléphone</span>
+                    <span class="receipt-value" id="receiptPhone">--</span>
+                </div>
+                <div class="receipt-row">
+                    <span class="receipt-label">Statut</span>
+                    <span class="receipt-value" id="receiptStatus" style="color: #22c55e;">Confirmé (Payé)</span>
+                </div>
+                
+                <div class="receipt-items-container">
+                    <h4 style="font-size: 0.9rem; color: #6b21a8; margin-bottom: 0.8rem; font-weight: 700; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.4rem;">Détail des articles</h4>
+                    <div id="receiptItems">
+                        <!-- Populated dynamically -->
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 1rem; border-top: 2px solid #6b21a8; padding-top: 0.8rem; font-weight: 700; color: #1a1a1a; font-size: 1.1rem;">
+                        <span>Total Payé</span>
+                        <span id="receiptTotal">0.00 FCFA</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
+                    <button onclick="window.print()" class="btn-print">
+                        <i class="fas fa-print"></i> Imprimer le reçu
+                    </button>
+                </div>
+            </div>
+            
+            <a href="index.html" class="btn-home">Retour à la boutique</a>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & Receipt logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { initializeFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyBOdFfDX5pJGXPrbj4HBibdakEiLmLZ4bA",
+          authDomain: "barishop-27fdf.firebaseapp.com",
+          projectId: "barishop-27fdf",
+          storageBucket: "barishop-27fdf.firebasestorage.app",
+          messagingSenderId: "434603534493",
+          appId: "1:434603534493:web:9326066133cf1d58908c74",
+          measurementId: "G-XZ2WGRE94S"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = initializeFirestore(app, {
+          experimentalForceLongPolling: true
+        });
+
+        // Clear cart
+        localStorage.removeItem('barishop_cart');
+
+        // Fetch Order details
+        async function fetchOrderReceipt() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            
+            if (!orderId) return;
+
+            document.getElementById('displayOrderId').textContent = `Commande #${orderId}`;
+
+            try {
+                const orderRef = doc(db, "orders", orderId);
+                const orderSnap = await getDoc(orderRef);
+
+                if (orderSnap.exists()) {
+                    const orderData = orderSnap.data();
+                    
+                    // Show receipt box
+                    document.getElementById('receiptBox').style.display = 'block';
+                    
+                    // Populate basic details
+                    document.getElementById('receiptOrderId').textContent = orderId;
+                    document.getElementById('receiptClient').textContent = orderData.nomclient || 'Client';
+                    document.getElementById('receiptPhone').textContent = orderData.numeroSend || 'N/A';
+                    
+                    // Format Date
+                    if (orderData.date) {
+                        const dateObj = new Date(orderData.date);
+                        document.getElementById('receiptDate').textContent = dateObj.toLocaleString('fr-FR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                    }
+
+                    // Status style mapping
+                    const statusEl = document.getElementById('receiptStatus');
+                    if (orderData.status === 'Payé') {
+                        statusEl.textContent = 'Confirmé (Payé) ✅';
+                        statusEl.style.color = '#22c55e';
+                    } else {
+                        statusEl.textContent = orderData.status || 'En attente de paiement ⏳';
+                        statusEl.style.color = '#f59e0b';
+                    }
+
+                    // Populate Articles
+                    const itemsContainer = document.getElementById('receiptItems');
+                    itemsContainer.innerHTML = '';
+                    
+                    if (orderData.article && Array.isArray(orderData.article)) {
+                        orderData.article.forEach(itemObj => {
+                            for (const [name, price] of Object.entries(itemObj)) {
+                                const row = document.createElement('div');
+                                row.className = 'receipt-item-row';
+                                row.innerHTML = `
+                                    <span style="color: #4a5568;">${name}</span>
+                                    <span style="font-weight: 500; color: #1a1a1a;">${Math.round(price)} FCFA</span>
+                                `;
+                                itemsContainer.appendChild(row);
+                            }
+                        });
+                    }
+
+                    // Total
+                    document.getElementById('receiptTotal').textContent = `${Math.round(orderData.totalPrice || 0)} FCFA`;
+                }
+            } catch (err) {
+                console.error("Error loading receipt:", err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', fetchOrderReceipt);
+    </script>
+</body>
+</html>

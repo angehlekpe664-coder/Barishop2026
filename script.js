@@ -25,13 +25,14 @@ document.addEventListener('DOMContentLoaded', function() {
     initDeliveryCalculator();
     initWishlist();
     initProductSearch();
+    initPayment();
 });
 
 // ========================================
 // FIREBASE IMPORTS
 // ========================================
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs, getDoc, doc, setDoc, addDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeFirestore, collection, getDocs, getDoc, doc, setDoc, addDoc, updateDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -45,7 +46,9 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true
+});
 const auth = getAuth(app);
 
 // ========================================
@@ -89,7 +92,24 @@ function initCart() {
             showNotification('Votre panier est vide', 'error');
             return;
         }
-        showNotification('Redirection vers le paiement...', 'info');
+        
+        // Open payment modal
+        const paymentModal = document.getElementById('paymentModal');
+        const paymentModalOverlay = document.getElementById('paymentModalOverlay');
+        const paymentModalTotal = document.getElementById('paymentModalTotal');
+        
+        if (paymentModal && paymentModalOverlay && paymentModalTotal) {
+            // Calculate total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            paymentModalTotal.textContent = total.toFixed(2) + ' FCFA';
+            
+            // Close cart sidebar
+            closeCart();
+            
+            // Show payment modal
+            paymentModal.classList.add('active');
+            paymentModalOverlay.classList.add('active');
+        }
     });
     
     // Update cart display
@@ -194,7 +214,7 @@ function updateCartDisplay() {
     
     // Update total
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    if (cartTotal) cartTotal.textContent = total.toFixed(2) + '€';
+    if (cartTotal) cartTotal.textContent = total.toFixed(2) + ' FCFA';
     
     // Update items
     if (cartItems) {
@@ -209,7 +229,7 @@ function updateCartDisplay() {
                     <div class="cart-item-details">
                         <div>
                             <h4 class="cart-item-name">${escapeHtml(item.name)}</h4>
-                            <p class="cart-item-price">${item.price.toFixed(2)}€</p>
+                            <p class="cart-item-price">${item.price.toFixed(2)} FCFA</p>
                         </div>
                         <div class="cart-item-quantity">
                             <button class="quantity-btn" onclick="updateQuantity('${item.id}', '${item.size}', -1)">-</button>
@@ -335,7 +355,7 @@ function renderWishlistItems() {
             <div class="cart-item-details">
                 <div>
                     <h4 class="cart-item-name">${escapeHtml(item.name)}</h4>
-                    <p class="cart-item-price">${parseFloat(item.price).toFixed(2)}€</p>
+                    <p class="cart-item-price">${parseFloat(item.price).toFixed(2)} FCFA</p>
                 </div>
                 <div class="cart-item-quantity">
                     <button class="cart-item-remove" data-item-id="${item.id}">
@@ -539,7 +559,7 @@ function initProductModal() {
             const product = {
                 id: card.dataset.id || 'static-' + Date.now(),
                 name: card.querySelector('h3')?.textContent || 'Parfum',
-                price: card.querySelector('.price')?.textContent?.replace('€', '') || '0',
+                price: card.querySelector('.price')?.textContent?.replace(' FCFA', '') || '0',
                 image: card.querySelector('.product-image img')?.src || '',
                 description: card.querySelector('.product-description')?.textContent || '',
                 notes: ['Boisée', 'Florale', 'Fruité'],
@@ -567,7 +587,7 @@ function initProductModal() {
             </div>
             <div class="product-modal-info">
                 <h2>${escapeHtml(product.name)}</h2>
-                <p class="product-modal-price">${parseFloat(product.price).toFixed(2)}€</p>
+                <p class="product-modal-price">${parseFloat(product.price).toFixed(2)} FCFA</p>
                 <p class="product-modal-description">${escapeHtml(product.description)}</p>
                 
                 <div class="product-olfactory-notes">
@@ -633,6 +653,183 @@ function initProductModal() {
     }
 }
 
+// ========================================
+// TALYPAY INTEGRATION
+// ========================================
+function initPayment() {
+    const paymentModal = document.getElementById('paymentModal');
+    const paymentModalOverlay = document.getElementById('paymentModalOverlay');
+    const paymentModalClose = document.getElementById('paymentModalClose');
+    const paymentForm = document.getElementById('paymentForm');
+    const paymentSubmitBtn = document.getElementById('paymentSubmitBtn');
+
+    if (!paymentModal || !paymentForm) return;
+
+    // Use the Production Public Key from the screenshot
+    const TALYPAY_PUBLIC_KEY = "tk_live_T9VHRXZfK3qNr560VqgDzX4HNkWlWLbLKo6cLWm0lKkcqNrLzsWHp6t0J8gwaJqp";
+
+    const closePaymentModal = () => {
+        paymentModal.classList.remove('active');
+        paymentModalOverlay.classList.remove('active');
+    };
+
+    paymentModalClose?.addEventListener('click', closePaymentModal);
+    paymentModalOverlay?.addEventListener('click', closePaymentModal);
+
+    paymentForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (cart.length === 0) {
+            showNotification('Votre panier est vide', 'error');
+            closePaymentModal();
+            return;
+        }
+
+        const paymentMode = document.getElementById('paymentMethod').value;
+        const nomClient = document.getElementById('paymentNom').value;
+        let numeroSend = document.getElementById('paymentPhone').value.trim();
+        const emailClient = document.getElementById('paymentEmail').value.trim();
+        const total = Math.round(cart.reduce((sum, item) => sum + (item.price * item.quantity), 0));
+
+        // Sanitize and validate phone number (Benin format)
+        let phoneClean = numeroSend.replace(/[\s\+\-\(\)]/g, '');
+        if (phoneClean.startsWith('00')) {
+            phoneClean = phoneClean.slice(2);
+        }
+
+        let finalPhone = '';
+        let isPhoneValid = false;
+
+        if (/^\d+$/.test(phoneClean)) {
+            if (phoneClean.startsWith('229')) {
+                if (phoneClean.length === 13 && phoneClean.substring(3, 5) === '01') {
+                    finalPhone = phoneClean;
+                    isPhoneValid = true;
+                } else if (phoneClean.length === 11) {
+                    // Convert old 11-digit format (229XXXXXXXX) to new 13-digit format (22901XXXXXXXX)
+                    finalPhone = '22901' + phoneClean.slice(3);
+                    isPhoneValid = true;
+                }
+            } else {
+                if (phoneClean.length === 10 && phoneClean.startsWith('01')) {
+                    finalPhone = '229' + phoneClean;
+                    isPhoneValid = true;
+                } else if (phoneClean.length === 8) {
+                    // Convert old 8-digit format (XXXXXXXX) to new 13-digit format (22901XXXXXXXX)
+                    finalPhone = '22901' + phoneClean;
+                    isPhoneValid = true;
+                }
+            }
+        }
+
+        if (!isPhoneValid) {
+            showNotification('Veuillez saisir un numéro de téléphone béninois valide (ex: 01XXXXXXXX ou +22901XXXXXXXX).', 'error');
+            return;
+        }
+
+        numeroSend = finalPhone;
+
+        // Split name into first and last if possible
+        const nameParts = nomClient.split(' ');
+        const firstname = nameParts.length > 1 ? nameParts.slice(1).join(' ') : 'Client';
+        const lastname = nameParts[0];
+
+        // Prepare items list for description (strip parentheses to prevent TalyPay API RESOURCE_NOT_FOUND error)
+        const itemsDescription = cart.map(item => `${item.name} x${item.quantity}`).join(', ').replace(/[()]/g, '');
+
+        // Use random order ID for tracking
+        const orderId = 'BS-' + Date.now();
+        
+        // Define base URL for redirection fallback
+        let baseUrl = window.location.origin;
+        if (baseUrl.includes('file://')) {
+            baseUrl = 'https://barishop.example';
+        }
+
+        try {
+            // Update button state
+            paymentSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Initialisation...</span>';
+            paymentSubmitBtn.disabled = true;
+
+            const paymentPayload = {
+                payment_mode: paymentMode,
+                customer_name: lastname,
+                customer_firstname: firstname,
+                customer_email: emailClient,
+                customer_tel: numeroSend,
+                amount: total,
+                currency: 'XOF',
+                country: 'benin',
+                payment_ref: orderId,
+                description: 'Commande Barishop: ' + itemsDescription,
+                callback_url: `${baseUrl}/payment-success.html?orderId=${orderId}`
+            };
+
+            console.log("🚀 Envoi vers TalyPay:", paymentPayload);
+
+            // 1. Sauvegarder la commande en base de données AVANT d'appeler TalyPay
+            try {
+                await setDoc(doc(db, "orders", orderId), {
+                    orderId: orderId,
+                    nomclient: nomClient,
+                    numeroSend: numeroSend,
+                    email: emailClient,
+                    totalPrice: total,
+                    article: cart.map(item => ({ [item.name]: item.price })),
+                    status: 'En attente de paiement',
+                    date: new Date().toISOString(),
+                    userId: auth.currentUser ? auth.currentUser.uid : "guest"
+                });
+            } catch (firestoreError) {
+                console.error("Erreur Firestore :", firestoreError);
+            }
+
+            // 2. Initialiser TalyPay SDK
+            if (typeof TalyPay === 'undefined') {
+                throw new Error("Le SDK TalyPay n'est pas chargé. Veuillez vérifier votre connexion internet.");
+            }
+
+            const talypay = new TalyPay(TALYPAY_PUBLIC_KEY, {
+                sandbox: false,
+                onSuccess: (response) => {
+                    console.log('✅ Paiement TalyPay réussi:', response);
+                    updateDoc(doc(db, "orders", orderId), { status: 'Payé' })
+                        .catch(err => console.error("Erreur MAJ statut:", err));
+                    
+                    showNotification('Paiement réussi ! Merci.', 'success');
+                    window.location.href = `payment-success.html?orderId=${orderId}`;
+                },
+                onError: (error) => {
+                    console.error('❌ Erreur TalyPay (onError):', error);
+                    let errorMsg = error.message || 'Échec du paiement';
+                    if (error.details) {
+                        console.log('Détails erreur:', error.details);
+                    }
+                    showNotification('Erreur : ' + errorMsg, 'error');
+                    
+                    paymentSubmitBtn.innerHTML = '<i class="fas fa-lock"></i><span>Payer maintenant</span>';
+                    paymentSubmitBtn.disabled = false;
+                },
+                onPending: (data) => {
+                    console.log(`⏳ Vérification TalyPay... tentative ${data.attempt}/${data.max_attempts}`);
+                    paymentSubmitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i><span>Confirmation (${data.attempt})...</span>`;
+                }
+            });
+
+            // 3. Lancer le paiement et attendre qu'il s'initialise (pour capturer les erreurs asynchrones de validation du SDK)
+            await talypay.initPayment(paymentPayload, true);
+
+        } catch (error) {
+            console.error('Payment error:', error);
+            showNotification(error.message || 'Erreur lors de l\'initialisation du paiement', 'error');
+            
+            // Restore button
+            paymentSubmitBtn.innerHTML = '<i class="fas fa-lock"></i><span>Payer maintenant</span>';
+            paymentSubmitBtn.disabled = false;
+        }
+    });
+}
+
 let cartTotal = 0;
 
 // ========================================
@@ -661,7 +858,7 @@ function initDeliveryCalculator() {
                     result = `
                         <div class="delivery-result active free">
                             <h5><i class="fas fa-truck"></i> Livraison gratuite !</h5>
-                            <p>Vous bénéficier de la livraison gratuite car votre commande dépasse ${FREE_SHIPPING_THRESHOLD}€</p>
+                            <p>Vous bénéficier de la livraison gratuite car votre commande dépasse ${FREE_SHIPPING_THRESHOLD} FCFA</p>
                         </div>
                     `;
                 } else {
@@ -669,8 +866,8 @@ function initDeliveryCalculator() {
                     const remaining = FREE_SHIPPING_THRESHOLD - cartTotal;
                     result = `
                         <div class="delivery-result active paid">
-                            <h5><i class="fas fa-truck"></i> ${shippingCost}€</h5>
-                            <p>Plus que ${remaining.toFixed(2)}€ pour bénéficier de la livraison gratuite !</p>
+                            <h5><i class="fas fa-truck"></i> ${shippingCost} FCFA</h5>
+                            <p>Plus que ${remaining.toFixed(2)} FCFA pour bénéficier de la livraison gratuite !</p>
                         </div>
                     `;
                 }
@@ -680,7 +877,7 @@ function initDeliveryCalculator() {
                     result = `
                         <div class="delivery-result active free">
                             <h5><i class="fas fa-truck"></i> Livraison gratuite !</h5>
-                            <p>Vous bénéficier de la livraison gratuite car votre commande dépasse ${FREE_SHIPPING_THRESHOLD}€</p>
+                            <p>Vous bénéficier de la livraison gratuite car votre commande dépasse ${FREE_SHIPPING_THRESHOLD} FCFA</p>
                         </div>
                     `;
                 } else {
@@ -688,8 +885,8 @@ function initDeliveryCalculator() {
                     const remaining = FREE_SHIPPING_THRESHOLD - cartTotal;
                     result = `
                         <div class="delivery-result active paid">
-                            <h5><i class="fas fa-truck"></i> ${shippingCost}€</h5>
-                            <p>Plus que ${remaining.toFixed(2)}€ pour bénéficier de la livraison gratuite !</p>
+                            <h5><i class="fas fa-truck"></i> ${shippingCost} FCFA</h5>
+                            <p>Plus que ${remaining.toFixed(2)} FCFA pour bénéficier de la livraison gratuite !</p>
                         </div>
                     `;
                 }
@@ -698,7 +895,7 @@ function initDeliveryCalculator() {
                 const shippingCost = 25;
                 result = `
                     <div class="delivery-result active paid">
-                        <h5><i class="fas fa-plane"></i> ${shippingCost}€</h5>
+                        <h5><i class="fas fa-plane"></i> ${shippingCost} FCFA</h5>
                         <p>Livraison internationale. Délai de 7 à 14 jours ouvrés.</p>
                     </div>
                 `;
@@ -791,6 +988,44 @@ async function loadProducts() {
     const productsGrid = document.querySelector('.products-grid');
     if (!productsGrid) return;
 
+    const defaultProducts = [
+        {
+            id: 'p1',
+            name: 'Ambre Impérial',
+            description: 'Un parfum envoûtant associant la chaleur de l\'ambre gris aux notes épicées de cardamome et de vanille de Madagascar.',
+            price: 35000,
+            image: 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80'
+        },
+        {
+            id: 'p2',
+            name: 'Nuit d\'Ébène',
+            description: 'Une fragrance mystérieuse à base de bois de oud, d\'encens et de cuir, conçue pour les tempéraments audacieux.',
+            price: 45000,
+            image: 'https://images.unsplash.com/photo-1594035910387-fea47794261f?auto=format&fit=crop&w=600&q=80'
+        },
+        {
+            id: 'p3',
+            name: 'Fleur de Jasmin',
+            description: 'Un bouquet délicat de jasmin sambac, de fleurs d\'oranger et de musc blanc pour une élégance intemporelle.',
+            price: 32000,
+            image: 'https://images.unsplash.com/photo-1590736969955-0126f7e1e88d?auto=format&fit=crop&w=600&q=80'
+        },
+        {
+            id: 'p4',
+            name: 'Santal Royal',
+            description: 'Une fragrance boisée et chaleureuse qui mêle la noblesse du santal d\'Australie à la douceur crémeuse de la noix de coco.',
+            price: 38000,
+            image: 'https://images.unsplash.com/photo-1523293182086-7651a899d37f?auto=format&fit=crop&w=600&q=80'
+        },
+        {
+            id: 'p5',
+            name: 'Oud Suprême',
+            description: 'L\'intensité du bois de oud soulignée par la fraîcheur épicée du safran et la sensualité du patchouli.',
+            price: 49000,
+            image: 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=600&q=80'
+        }
+    ];
+
     try {
         const q = query(collection(db, "products"), orderBy("date", "desc"));
         const querySnapshot = await getDocs(q);
@@ -802,9 +1037,14 @@ async function loadProducts() {
             });
             allProducts = products;
             displayProducts(products);
+        } else {
+            allProducts = defaultProducts;
+            displayProducts(defaultProducts);
         }
     } catch (error) {
-        console.error('Error loading products:', error);
+        console.error('Error loading products, using fallback:', error);
+        allProducts = defaultProducts;
+        displayProducts(defaultProducts);
     }
 }
 
@@ -812,27 +1052,31 @@ function displayProducts(products) {
     const productsGrid = document.querySelector('.products-grid');
     if (!productsGrid) return;
 
-    productsGrid.innerHTML = products.map((product, index) => `
+    const fallbackPerfumeImage = 'https://images.unsplash.com/photo-1544441893-675973e31985?auto=format&fit=crop&w=600&q=80';
+
+    productsGrid.innerHTML = products.map((product, index) => {
+        const imgSrc = (product.image && !product.image.includes('placeholder')) ? product.image : fallbackPerfumeImage;
+        return `
         <div class="product-card" data-id="${product.id}" data-aos="fade-up" data-aos-delay="${index * 100}">
             <div class="product-image">
-                <img src="${product.image || 'https://via.placeholder.com/600x400?text=Parfum'}" alt="${escapeHtml(product.name)}" onerror="this.src='https://via.placeholder.com/600x400?text=Parfum'" loading="lazy">
+                <img src="${imgSrc}" alt="${escapeHtml(product.name)}" onerror="this.onerror=null; this.src='${fallbackPerfumeImage}';" loading="lazy">
                 <div class="product-badge">Nouveau</div>
             </div>
             <div class="product-info">
                 <h3>${escapeHtml(product.name)}</h3>
                 <p class="product-description">${escapeHtml(product.description || '')}</p>
                 <div class="product-footer">
-                    <span class="price">${parseFloat(product.price || 0).toFixed(2)}€</span>
-                    <button class="btn-wishlist ${isInWishlist(product.id) ? 'active' : ''}" data-product-id="${product.id}" data-product-name="${escapeHtml(product.name)}" data-product-price="${product.price}" data-product-image="${product.image || ''}" aria-label="Ajouter aux favoris">
+                    <span class="price">${parseFloat(product.price || 0).toFixed(2)} FCFA</span>
+                    <button class="btn-wishlist ${isInWishlist(product.id) ? 'active' : ''}" data-product-id="${product.id}" data-product-name="${escapeHtml(product.name)}" data-product-price="${product.price}" data-product-image="${imgSrc}" aria-label="Ajouter aux favoris">
                         <i class="fas fa-heart"></i>
                     </button>
-                    <button class="btn-quick-add" onclick="event.stopPropagation(); quickAddToCart('${product.id}', '${escapeHtml(product.name)}', '${product.price}', '${product.image}')">
+                    <button class="btn-quick-add" onclick="event.stopPropagation(); quickAddToCart('${product.id}', '${escapeHtml(product.name)}', '${product.price}', '${imgSrc}')">
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 
     setTimeout(() => {
         initHoverEffects();
@@ -866,6 +1110,33 @@ async function loadArticles() {
     const blogsGrid = document.getElementById('blogsGrid');
     if (!blogsGrid) return;
 
+    const defaultBlogArticles = [
+        {
+            id: 'default-1',
+            title: '3 parfums must-have pour le printemps',
+            category: 'Nouveautés',
+            date: '2026-03-11',
+            image: 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=900&q=80',
+            excerpt: 'Découvrez les nouvelles fragrances à porter dès maintenant, entre notes florales et accords frais.'
+        },
+        {
+            id: 'default-2',
+            title: 'Comment faire durer votre parfum toute la journée',
+            category: 'Conseils',
+            date: '2026-02-28',
+            image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=80',
+            excerpt: 'Quelques astuces simples pour fixer les notes et profiter de votre parfum plus longtemps.'
+        },
+        {
+            id: 'default-3',
+            title: 'Tendances parfum 2026 : notes rares et packaging éco',
+            category: 'Inspirations',
+            date: '2026-01-14',
+            image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=900&q=80',
+            excerpt: 'Les grandes tendances à suivre cette année pour choisir des parfums à la fois modernes et responsables.'
+        }
+    ];
+
     try {
         const q = query(collection(db, "articles"), orderBy("date", "desc"));
         const querySnapshot = await getDocs(q);
@@ -876,9 +1147,12 @@ async function loadArticles() {
                 articles.push({ id: doc.id, ...doc.data() });
             });
             displayArticles(articles);
+        } else {
+            displayArticles(defaultBlogArticles);
         }
     } catch (error) {
-        console.error('Error loading articles:', error);
+        console.error('Error loading articles, using fallback:', error);
+        displayArticles(defaultBlogArticles);
     }
 }
 
@@ -899,7 +1173,7 @@ async function loadBlogDetail() {
             title: '3 parfums must-have pour le printemps',
             category: 'Nouveautés',
             date: '2026-03-11',
-            image: 'https://images.unsplash.com/photo-1529312266894-4b271b4ff4c4?auto=format&fit=crop&w=1200&q=80',
+            image: 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=1200&q=80',
             excerpt: 'Découvrez les nouvelles fragrances à porter dès maintenant, entre notes florales et accords frais.',
             content: `
                 <p>Le printemps est la saison idéale pour explorer de nouvelles fragrances. Nous avons sélectionné trois parfums qui éveillent les sens et s'adaptent à toutes les occasions :</p>
@@ -915,7 +1189,7 @@ async function loadBlogDetail() {
             title: 'Comment faire durer votre parfum toute la journée',
             category: 'Conseils',
             date: '2026-02-28',
-            image: 'https://images.unsplash.com/photo-1520342868574-5fa3804e551c?auto=format&fit=crop&w=1200&q=80',
+            image: 'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=1200&q=80',
             excerpt: 'Quelques astuces simples pour fixer les notes et profiter de votre parfum plus longtemps.',
             content: `
                 <p>Quelques gestes simples suffisent pour prolonger la tenue de votre parfum :</p>
@@ -931,7 +1205,7 @@ async function loadBlogDetail() {
             title: 'Tendances parfum 2026 : notes rares et packaging éco',
             category: 'Inspirations',
             date: '2026-01-14',
-            image: 'https://images.unsplash.com/photo-1495125520140-4e1e17a25f17?auto=format&fit=crop&w=1200&q=80',
+            image: 'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=1200&q=80',
             excerpt: 'Les grandes tendances à suivre cette année pour choisir des parfums à la fois modernes et responsables.',
             content: `
                 <p>En 2026, le monde du parfum se recentre sur l'authenticité et la durabilité :</p>
@@ -952,7 +1226,7 @@ async function loadBlogDetail() {
         detailWrapper.innerHTML = `
             <article class="blog-detail">
                 <div class="blog-detail-hero">
-                    <img src="${article.image || 'https://via.placeholder.com/1200x600?text=Article'}" alt="${escapeHtml(article.title)}">
+                    <img src="${(article.image && !article.image.includes('placeholder')) ? article.image : 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=1200&q=80'}" alt="${escapeHtml(article.title)}">
                     <div class="blog-detail-overlay">
                         <span class="blog-detail-category">${escapeHtml(article.category || 'Nouveautés')}</span>
                         <div class="blog-detail-meta">
@@ -991,7 +1265,7 @@ async function loadBlogDetail() {
         detailWrapper.innerHTML = `
             <article class="blog-detail">
                 <div class="blog-detail-hero">
-                    <img src="${article.image || 'https://via.placeholder.com/1200x600?text=Article'}" alt="${escapeHtml(article.title)}">
+                    <img src="${(article.image && !article.image.includes('placeholder')) ? article.image : 'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=1200&q=80'}" alt="${escapeHtml(article.title)}">
                     <div class="blog-detail-overlay">
                         <span class="blog-detail-category">${escapeHtml(article.category || 'Nouveautés')}</span>
                         <div class="blog-detail-meta">
@@ -1021,10 +1295,19 @@ function displayArticles(articles) {
     const blogsGrid = document.getElementById('blogsGrid');
     if (!blogsGrid) return;
 
-    blogsGrid.innerHTML = articles.map((article, index) => `
+    const fallbackBlogImages = [
+        'https://images.unsplash.com/photo-1587017539504-67cfbddac569?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1547887537-6158d64c35b3?auto=format&fit=crop&w=900&q=80'
+    ];
+
+    blogsGrid.innerHTML = articles.map((article, index) => {
+        const fallbackImg = fallbackBlogImages[index % fallbackBlogImages.length];
+        const imgSrc = (article.image && !article.image.includes('placeholder')) ? article.image : fallbackImg;
+        return `
         <article class="blog-card" data-category="${escapeHtml(article.category || 'Nouveautés')}" data-aos="fade-up" data-aos-delay="${index * 100}">
             <div class="blog-image">
-                <img src="${article.image || 'https://via.placeholder.com/600x400?text=Article'}" alt="${escapeHtml(article.title)}" onerror="this.src='https://via.placeholder.com/600x400?text=Article'" loading="lazy">
+                <img src="${imgSrc}" alt="${escapeHtml(article.title)}" onerror="this.onerror=null; this.src='${fallbackImg}';" loading="lazy">
                 <span class="blog-category">${escapeHtml(article.category || 'Nouveautés')}</span>
             </div>
             <div class="blog-content">
@@ -1036,13 +1319,13 @@ function displayArticles(articles) {
                 <p class="blog-excerpt">${escapeHtml(article.excerpt || '')}</p>
                 ${parseFloat(article.price || 0) > 0 ? `
                     <div class="blog-price-display">
-                        <span class="price">${parseFloat(article.price).toFixed(2)}€</span>
+                        <span class="price">${parseFloat(article.price).toFixed(2)} FCFA</span>
                     </div>
                 ` : ''}
                 <a href="blog.html?id=${article.id}" class="blog-link">Lire la suite <i class="fas fa-arrow-right"></i></a>
             </div>
         </article>
-    `).join('');
+    `}).join('');
 
     initBlogFilters();
     initHoverEffects();
@@ -1236,11 +1519,11 @@ function initTypingAnimation() {
     if (!typingElement) return;
     
     const texts = [
-        "Découvrez notre collection exclusive de parfums créés avec des ingrédients d'exception. Chaque fragrance raconte une histoire unique.",
-        "Nos parfums sont élaborés avec les essences les plus rares du monde. Des notes de tête vibrantes aux fonds profonds envoûtants.",
-        "Laissez-vous séduire par nos fragrances uniques, mêlant tradition artisanale et innovation contemporaine. L'excellence à votre portée.",
-        "Chaque parfum Barishop est le fruit d'un savoir-faire centenaire. Nos nez experts sélectionnent avec passion les matières premières précieuses.",
-        "Des senteurs envoûtantes qui évoluent avec vous tout au long de la journée. L'art de la parfumerie dans sa forme la plus pure."
+        "L'élégance a une odeur. Révélez votre signature olfactive avec les créations exclusives Barishop.",
+        "Des fragrances rares et envoûtantes, élaborées pour captiver les sens et durer toute la journée.",
+        "Une sélection prestigieuse de parfums d'exception, alliant luxe artisanal et sillage inoubliable.",
+        "Votre parfum raconte votre histoire. Exprimez votre personnalité avec distinction et raffinement.",
+        "Le raffinement absolu, de la première note de tête aux notes de fond profondes et magnétiques."
     ];
     
     let textIndex = 0;

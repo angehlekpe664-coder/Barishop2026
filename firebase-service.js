@@ -3,7 +3,7 @@
 // ========================================
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, collection, getDocs, getDoc, doc, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { initializeFirestore, collection, getDocs, getDoc, doc, setDoc, addDoc, updateDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
 // Firebase configuration
@@ -19,7 +19,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = initializeFirestore(app, {
+  experimentalForceLongPolling: true
+});
 const auth = getAuth(app);
 
 // ========================================
@@ -378,6 +380,63 @@ export async function deleteCart(uid) {
     try {
         if (!uid) throw new Error("UID manquant");
         await deleteDoc(doc(db, "carts", uid));
+        return { success: true };
+    } catch (error) {
+        return { success: false, message: error.message };
+    }
+}
+
+// ========================================
+// REAL ORDERS (NEW SYSTEM)
+// ========================================
+
+export async function createOrder(orderData) {
+    try {
+        const orderRef = doc(db, "orders", orderData.orderId.toString());
+        await setDoc(orderRef, {
+            ...orderData,
+            status: 'En attente de paiement', // default status
+            date: new Date().toISOString()
+        });
+        return { success: true, id: orderData.orderId };
+    } catch (error) {
+        console.error("Error creating order:", error);
+        return { success: false, message: error.message };
+    }
+}
+
+export async function getOrders() {
+    try {
+        const q = query(collection(db, "orders"), orderBy("date", "desc"));
+        const querySnapshot = await getDocs(q);
+        const orders = [];
+        querySnapshot.forEach((doc) => {
+            orders.push({ id: doc.id, ...doc.data() });
+        });
+        return { success: true, orders };
+    } catch (error) {
+        console.error("Error getting orders:", error);
+        return { success: false, message: error.message };
+    }
+}
+
+export async function updateOrderStatus(id, newStatus) {
+    try {
+        const orderRef = doc(db, "orders", id.toString());
+        await updateDoc(orderRef, {
+            status: newStatus,
+            lastUpdated: new Date().toISOString()
+        });
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating order status:", error);
+        return { success: false, message: error.message };
+    }
+}
+
+export async function deleteOrder(id) {
+    try {
+        await deleteDoc(doc(db, "orders", id.toString()));
         return { success: true };
     } catch (error) {
         return { success: false, message: error.message };
